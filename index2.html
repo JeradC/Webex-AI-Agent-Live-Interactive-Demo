@@ -100,8 +100,10 @@
     }
 
     .nav button.active {
-      border-color: rgba(31, 123, 209, 0.6);
-      background: rgba(31, 123, 209, 0.12);
+      border-color: #2a8cff;
+      background: rgba(42, 140, 255, 0.28);
+      color: #111;
+      box-shadow: inset 0 0 0 1px rgba(123, 188, 255, 0.4);
     }
 
     .nav button:hover {
@@ -1066,6 +1068,9 @@
     const aiDots = Array.from(document.querySelectorAll("#ai-dots span"));
     let aiIndex = 0;
 
+    overviewOverlay.classList.add("open");
+    overviewOverlay.setAttribute("aria-hidden", "false");
+
     envButtons.forEach((button) => {
       button.addEventListener("click", () => {
         const target = button.dataset.env;
@@ -1145,6 +1150,12 @@
     buttons.forEach((button) => {
       button.addEventListener("click", () => {
         closeAllOverlays();
+        buttons.forEach((btn) => btn.classList.remove("active"));
+        panels.forEach((panel) => panel.classList.remove("active"));
+        button.classList.add("active");
+        const target = document.getElementById(button.dataset.target);
+        if (target) target.classList.add("active");
+
         if (button.dataset.target === "intro") {
           overviewOverlay.classList.add("open");
           overviewOverlay.setAttribute("aria-hidden", "false");
@@ -1166,11 +1177,6 @@
           openAssistOverlay();
           return;
         }
-        buttons.forEach((btn) => btn.classList.remove("active"));
-        panels.forEach((panel) => panel.classList.remove("active"));
-        button.classList.add("active");
-        const target = document.getElementById(button.dataset.target);
-        if (target) target.classList.add("active");
       });
     });
 
