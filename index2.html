@@ -401,98 +401,6 @@
       line-height: 1.6;
     }
 
-    .persona-overlay {
-      position: fixed;
-      inset: 0;
-      left: var(--sidebar-width);
-      width: calc(100% - var(--sidebar-width));
-      background: rgba(7, 14, 28, 0.6);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s ease;
-      z-index: 54;
-      padding: 24px;
-    }
-
-    .persona-overlay.open {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .persona-card {
-      width: min(760px, 92vw);
-      max-height: 72vh;
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 20px;
-      border: 1px solid rgba(12, 62, 98, 0.18);
-      box-shadow: 0 24px 70px rgba(10, 53, 90, 0.28);
-      padding: 28px;
-      color: #0a355a;
-      display: grid;
-      gap: 16px;
-      overflow-y: auto;
-    }
-
-    .persona-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .persona-header h2 {
-      margin: 0;
-      font-size: 1.6rem;
-    }
-
-    .persona-close {
-      border: 1px solid rgba(31, 123, 209, 0.6);
-      background: rgba(31, 123, 209, 0.12);
-      color: #0a355a;
-      padding: 8px 14px;
-      border-radius: 999px;
-      cursor: pointer;
-      font-weight: 600;
-    }
-
-    .persona-grid {
-      display: grid;
-      gap: 16px;
-      grid-template-columns: 1fr;
-    }
-
-    .persona {
-      border: 1px solid rgba(12, 62, 98, 0.16);
-      border-radius: 16px;
-      padding: 16px;
-      background: rgba(31, 123, 209, 0.06);
-      display: grid;
-      gap: 10px;
-    }
-
-    .persona img {
-      width: 120px;
-      height: auto;
-      object-fit: contain;
-      border-radius: 12px;
-      border: 1px solid rgba(12, 62, 98, 0.12);
-      justify-self: start;
-    }
-
-    .persona strong {
-      font-size: 1.05rem;
-    }
-
-    .persona ul {
-      margin: 0;
-      padding-left: 18px;
-      color: rgba(10, 53, 90, 0.78);
-      line-height: 1.5;
-    }
-
     .knowledge-overlay {
       position: fixed;
       inset: 0;
@@ -820,11 +728,6 @@
         width: 100%;
       }
 
-      .persona-overlay {
-        left: 0;
-        width: 100%;
-      }
-
       .knowledge-overlay {
         left: 0;
         width: 100%;
@@ -851,7 +754,6 @@
       <div class="side-content">
         <nav class="nav" aria-label="Demo navigation">
           <button class="active" data-target="intro">Overview</button>
-          <button data-target="persona">Example Persona</button>
           <button data-target="contact">Ways to Interact with AI Agent</button>
           <button data-target="ai-config">AI Agent Configuration</button>
           <button data-target="knowledge">Knowledge Base Configuration</button>
@@ -869,10 +771,6 @@
           <div class="instruction-panel" id="ai-config">
             <h2>AI Agent Configuration</h2>
             <p>Open the AI configuration modal to walk through the six configuration visuals and talk through each step.</p>
-          </div>
-          <div class="instruction-panel" id="persona">
-            <h2>Example Persona</h2>
-            <p>Open the persona modal to showcase example guests and their interaction goals.</p>
           </div>
           <div class="instruction-panel" id="knowledge">
             <h2>Knowledge Base Configuration</h2>
@@ -1006,36 +904,6 @@
         <div class="interact-qr">
           <img src="https://github.com/JeradC/Webex-AI-Agent-Live-Interactive-Demo/blob/main/img/AIAgentSMSClickdemo.png" alt="SMS AI agent QR code" />
           <p>Scan to launch the SMS AI entry point.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="persona-overlay" id="persona-overlay" aria-hidden="true">
-    <div class="persona-card" role="dialog" aria-modal="true" aria-labelledby="persona-title">
-      <div class="persona-header">
-        <h2 id="persona-title">Example Persona (Placeholder)</h2>
-        <button class="persona-close" id="close-persona">Close</button>
-      </div>
-      <p>Placeholder personas for demo storytelling. Replace with your real customer profiles.</p>
-      <div class="persona-grid">
-        <div class="persona">
-          <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=900&q=80" alt="Casual headshot of Ava" />
-          <strong>Ava Morales</strong>
-          <ul>
-            <li>Phone: (212) 555-0187</li>
-            <li>Goal: Mortgage pre‑approval for a first home</li>
-            <li>Needs: Rate options, documents checklist, timeline</li>
-          </ul>
-        </div>
-        <div class="persona">
-          <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80" alt="Professional headshot of Joe Smith" />
-          <strong>Joe Smith</strong>
-          <ul>
-            <li>Phone: Customer number</li>
-            <li>Goal: Mortgage rates and balance information</li>
-            <li>Needs: Credit card offer, check balance, and recent transactions</li>
-          </ul>
         </div>
       </div>
     </div>
@@ -1197,8 +1065,6 @@
     const closeAi = document.getElementById("close-ai");
     const interactOverlay = document.getElementById("interact-overlay");
     const closeInteract = document.getElementById("close-interact");
-    const personaOverlay = document.getElementById("persona-overlay");
-    const closePersona = document.getElementById("close-persona");
     const knowledgeOverlay = document.getElementById("knowledge-overlay");
     const closeKnowledge = document.getElementById("close-knowledge");
     const assistOverlay = document.getElementById("assist-overlay");
@@ -1234,16 +1100,6 @@
       interactOverlay.setAttribute("aria-hidden", "true");
     }
 
-    function openPersonaOverlay() {
-      personaOverlay.classList.add("open");
-      personaOverlay.setAttribute("aria-hidden", "false");
-    }
-
-    function closePersonaOverlay() {
-      personaOverlay.classList.remove("open");
-      personaOverlay.setAttribute("aria-hidden", "true");
-    }
-
     function openKnowledgeOverlay() {
       knowledgeOverlay.classList.add("open");
       knowledgeOverlay.setAttribute("aria-hidden", "false");
@@ -1269,7 +1125,6 @@
       overviewOverlay.setAttribute("aria-hidden", "true");
       closeAiOverlay();
       closeInteractOverlay();
-      closePersonaOverlay();
       closeKnowledgeOverlay();
       closeAssistOverlay();
     }
@@ -1308,10 +1163,6 @@
         }
         if (button.dataset.target === "ai-config") {
           openAiOverlay();
-          return;
-        }
-        if (button.dataset.target === "persona") {
-          openPersonaOverlay();
           return;
         }
         if (button.dataset.target === "knowledge") {
@@ -1355,14 +1206,6 @@
     interactOverlay.addEventListener("click", (event) => {
       if (event.target === interactOverlay) {
         closeInteractOverlay();
-      }
-    });
-
-    closePersona.addEventListener("click", closePersonaOverlay);
-
-    personaOverlay.addEventListener("click", (event) => {
-      if (event.target === personaOverlay) {
-        closePersonaOverlay();
       }
     });
 
