@@ -21,6 +21,10 @@
 
     * { box-sizing: border-box; }
 
+    html, body {
+      height: 100%;
+    }
+
     body {
       margin: 0;
       font-family: "Space Grotesk", system-ui, sans-serif;
@@ -28,12 +32,14 @@
         linear-gradient(135deg, #d3e8f7 0%, #cbe3f6 55%, #c3def5 100%);
       color: var(--text);
       min-height: 100vh;
+      overflow: hidden;
     }
 
     .shell {
       display: grid;
       grid-template-columns: var(--sidebar-width) 1fr;
       min-height: 100vh;
+      height: 100vh;
     }
 
     .sidebar {
@@ -126,6 +132,7 @@
       grid-template-rows: auto 1fr;
       gap: 18px;
       padding: 8px 36px 28px;
+      min-height: 0;
     }
 
     .topbar {
@@ -193,13 +200,15 @@
       overflow: hidden;
       background: #0a0b10;
       box-shadow: 0 20px 60px rgba(10, 53, 90, 0.2);
+      min-height: 0;
     }
 
     iframe {
       width: 100%;
-      height: calc(100vh - 130px);
+      height: 100%;
       border: none;
       background: #111;
+      display: block;
     }
 
     .instruction-panel {
