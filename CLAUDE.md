@@ -85,6 +85,22 @@ All JS is inline at the bottom of each HTML file — no external scripts, no mod
 
 ---
 
+## App File Integrations (app*.html)
+
+Each simulated website (`app*.html`) includes a **Contact Concierge modal** with three interaction modes:
+
+1. **Phone** — Direct `tel:` link to a real Webex CC DNIS number
+2. **SMS** — Form that POSTs to a Webex Connect webhook (triggers SMS AI agent)
+3. **Callback** — Form that POSTs to a Webex Connect webhook (triggers callback/voice flow)
+
+The webhooks are defined in `app.html` as:
+- SMS: `https://hooks.us.webexconnect.io/events/7N19HJZ3J8`
+- Callback: `https://hooks.us.webexconnect.io/events/QSNEQYO899`
+
+Phone number input is validated and stripped of non-digits via `/\D/g` regex before submission. These webhook URLs are tied to live Webex Connect flows — do not change them without coordinating with the Webex Connect admin.
+
+---
+
 ## External Dependencies (CDN-loaded, no install needed)
 
 | Resource | URL | Used in |
