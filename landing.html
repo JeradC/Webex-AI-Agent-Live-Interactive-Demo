@@ -361,7 +361,7 @@
           </div>
 
           <form class="auth-form" id="auth-form">
-            <input id="email" name="email" type="email" autocomplete="username" placeholder="Enter email" required />
+            <input id="username" name="username" type="text" autocomplete="username" placeholder="Enter username" required />
             <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Enter password" required />
             <button id="submit" type="submit">Access Experience</button>
           </form>
@@ -380,50 +380,23 @@
     </div>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-    import { getAnalytics, isSupported as isAnalyticsSupported } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-analytics.js";
-    import {
-      browserLocalPersistence,
-      getAuth,
-      onAuthStateChanged,
-      setPersistence,
-      signInWithEmailAndPassword
-    } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
-
+  <script>
     const AUTH_STORAGE_KEY = "webex_ai_clickthrough_demo_authenticated";
     const AUTH_TIMESTAMP_KEY = "webex_ai_clickthrough_demo_authenticated_at";
     const AUTH_TIMEOUT_MS = 4 * 60 * 60 * 1000;
-    const firebaseConfig = {
-      apiKey: "AIzaSyCY9fRohl1CM4-ztCVjXYi-OitkNw6PaQ0",
-      authDomain: "gcp-jcockrof-nprd-58910.firebaseapp.com",
-      databaseURL: "https://gcp-jcockrof-nprd-58910-default-rtdb.firebaseio.com",
-      projectId: "gcp-jcockrof-nprd-58910",
-      storageBucket: "gcp-jcockrof-nprd-58910.firebasestorage.app",
-      messagingSenderId: "1053734275367",
-      appId: "1:1053734275367:web:254fb9aacb5c189cf7c102",
-      measurementId: "G-82B8B3M1X9"
-    };
+    const AUTH_ENDPOINT = "https://wxcc-customerdb.firebaseio.com/WebexAIClickThroughDemo.json";
 
     const params = new URLSearchParams(window.location.search);
     const defaultRedirect = "index.html";
     const requestedRedirect = params.get("redirect") || defaultRedirect;
     const form = document.getElementById("auth-form");
-    const emailInput = document.getElementById("email");
+    const usernameInput = document.getElementById("username");
     const passwordInput = document.getElementById("password");
     const statusEl = document.getElementById("status");
     const submitButton = document.getElementById("submit");
     const helpOverlay = document.getElementById("help-overlay");
     const openHelp = document.getElementById("open-help");
     const closeHelp = document.getElementById("close-help");
-    let authResolved = false;
-
-    const app = initializeApp(firebaseConfig);
-    if (await isAnalyticsSupported()) {
-      getAnalytics(app);
-    }
-    const auth = getAuth(app);
-    await setPersistence(auth, browserLocalPersistence);
 
     function setStatus(message, isError = false) {
       statusEl.textContent = message;
@@ -451,6 +424,16 @@
       return target;
     }
 
+    function hasFreshAuthState() {
+      const hasCookie = document.cookie.split("; ").includes(AUTH_STORAGE_KEY + "=true");
+      if (hasCookie) return true;
+
+      const authTimestamp = Number(localStorage.getItem(AUTH_TIMESTAMP_KEY) || "0");
+      return localStorage.getItem(AUTH_STORAGE_KEY) === "true"
+        && Number.isFinite(authTimestamp)
+        && (Date.now() - authTimestamp) < AUTH_TIMEOUT_MS;
+    }
+
     function continueToRequestedPage() {
       window.location.replace(sanitizeRedirect(requestedRedirect));
     }
@@ -473,26 +456,22 @@
       }
     });
 
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setAuthMarker();
-        continueToRequestedPage();
-        return;
-      }
-      authResolved = true;
+    if (hasFreshAuthState()) {
+      continueToRequestedPage();
+    } else {
       clearAuthMarker();
       submitButton.disabled = false;
       setStatus("");
-      emailInput.focus();
-    });
+      usernameInput.focus();
+    }
 
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
-      const email = emailInput.value.trim();
+      const username = usernameInput.value.trim();
       const password = passwordInput.value.trim();
 
-      if (!email) {
-        setStatus("Enter the email address to continue.", true);
+      if (!username) {
+        setStatus("Enter the username to continue.", true);
         return;
       }
 
@@ -502,23 +481,32 @@
       }
 
       submitButton.disabled = true;
-      setStatus("Signing in...");
+      setStatus("Checking credentials...");
 
       try {
-        await signInWithEmailAndPassword(auth, email, password);
-        setStatus("Authentication successful. Loading experience...");
-      } catch (error) {
-        const code = error && typeof error.code === "string" ? error.code : "";
-        const message = code === "auth/invalid-credential"
-          ? "Incorrect Useraname/Password. Please try again."
-          : (error.message || "Unable to authenticate right now.");
-        clearAuthMarker();
-        setStatus(message, true);
-        submitButton.disabled = false;
-      } finally {
-        if (authResolved) {
-          submitButton.disabled = false;
+        const response = await fetch(AUTH_ENDPOINT, { cache: "no-store" });
+        if (!response.ok) {
+          throw new Error("Unable to validate credentials right now.");
         }
+
+        const credentials = await response.json();
+        const isValid = credentials
+          && typeof credentials.username === "string"
+          && typeof credentials.password === "string"
+          && username === credentials.username
+          && password === credentials.password;
+
+        if (!isValid) {
+          throw new Error("Incorrect Username/Password. Please try again.");
+        }
+
+        setAuthMarker();
+        setStatus("Authentication successful. Loading experience...");
+        continueToRequestedPage();
+      } catch (error) {
+        clearAuthMarker();
+        setStatus(error.message || "Unable to authenticate right now.", true);
+        submitButton.disabled = false;
       }
     });
   </script>
